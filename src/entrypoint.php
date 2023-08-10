@@ -109,7 +109,7 @@ function start(): void
     $numThreads = getFromEnv("NUM_THREADS") ?? DEFAULT_NUM_SERVERS;
 
     execute(["mount rpc_pipefs"]);
-    execute(["mount nfsd "]);
+    execute(["mount nfsd"]);
 
     execute(["cat /etc/exports"]);
 
@@ -126,7 +126,7 @@ function start(): void
  * @param bool $debug
  * @return array
  */
-function execute(array $cmd, $debug = true): array
+function execute(array $cmd, bool $debug = true): array
 {
     exec(implode(" ", $cmd), $output, $code);
 
