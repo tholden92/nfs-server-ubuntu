@@ -1,4 +1,4 @@
-# NFS server
+# NFS Server
 
 NFS server running in docker/kubernetes with Ubuntu as base.
 
