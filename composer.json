@@ -10,9 +10,5 @@
       "name": "Thomas Holden",
       "email": "thomas@tholden.no"
     }
-  ],
-  "require": {
-    "ext-pcntl": "*",
-    "ext-posix": "*"
-  }
+  ]
 }
