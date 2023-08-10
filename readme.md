@@ -1,8 +1,8 @@
 # NFS Server
 
-NFS server running in docker/kubernetes with Ubuntu as base.
+NFS server running in docker/kubernetes with Ubuntu as the base image.
 
-## Example configuraton for docker-comopse
+## Example with docker-compose
 
 ```
 version: "3.9"
@@ -26,4 +26,6 @@ services:
             NUM_THREADS: 16
 ```
 
-Running in Kubernetes is possible too, but will need to run in privileged mode.
+## Kubernetes
+
+Container image is tested on GKE. Probably works fine on other cloud providers.
