@@ -1,0 +1,19 @@
+{
+  "name": "thomas/nfs-server",
+  "autoload": {
+    "psr-4": {
+      "Thomas\\NfsServer\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Thomas Holden",
+      "email": "thomas@nettbureau.no"
+    }
+  ],
+  "require": {
+    "symfony/process": "^6.3",
+    "ext-pcntl": "*",
+    "ext-posix": "*"
+  }
+}

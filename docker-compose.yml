@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  nfs-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    image: tholden92/nfs-server
+    privileged: true
+    ports:
+      - "2049:2049"
+      - "635:635"
+      - "1111:111"
+    volumes:
+      - "/exports"
+    environment:
+      NFS_EXPORT_0: "/exports *(rw,fsid=0,sync,no_subtree_check,no_auth_nlm,insecure,no_root_squash)"
+      SERVER_COUNT: 16
