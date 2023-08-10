@@ -8,11 +8,10 @@
   "authors": [
     {
       "name": "Thomas Holden",
-      "email": "thomas@nettbureau.no"
+      "email": "thomas@tholden.no"
     }
   ],
   "require": {
-    "symfony/process": "^6.3",
     "ext-pcntl": "*",
     "ext-posix": "*"
   }

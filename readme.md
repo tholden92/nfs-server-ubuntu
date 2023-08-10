@@ -10,8 +10,8 @@ version: "3.9"
 services:
     nfs-server:
         build:
-        context: .
-        dockerfile: Dockerfile
+            context: .
+            dockerfile: Dockerfile
         restart: always
         image: tholden92/nfs-server
         privileged: true
