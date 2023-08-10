@@ -108,6 +108,9 @@ function start(): void
 {
     $numThreads = getFromEnv("NUM_THREADS") ?? DEFAULT_NUM_SERVERS;
 
+    execute(["mount rpc_pipefs"]);
+    execute(["mount nfsd "]);
+
     execute(["cat /etc/exports"]);
 
     execute(["/sbin/rpcbind -w"]);
