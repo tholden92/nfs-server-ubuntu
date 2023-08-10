@@ -97,8 +97,6 @@ function stop(): void
     execute(["/usr/sbin/rpc.nfsd 0"]);
 
     execute(["kill -TERM $nfspid[0] $mountdPid[0] $rpcBindPid[0]"]);
-
-    exit(true);
 }
 
 /**
