@@ -23,6 +23,10 @@ jobs:
           scheme: semver
           increment: patch
 
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        run: composer install
+
       - name: Build image
         uses: docker/build-push-action@v2
         with:
