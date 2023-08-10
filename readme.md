@@ -23,7 +23,7 @@ services:
             - "/exports"
         environment:
             NFS_EXPORT_0: "/exports *(rw,fsid=0,sync,no_subtree_check,no_auth_nlm,insecure,no_root_squash)"
-            SERVER_COUNT: 16
+            NUM_THREADS: 16
 ```
 
 Running in Kubernetes is possible too, but will need to run in privileged mode.

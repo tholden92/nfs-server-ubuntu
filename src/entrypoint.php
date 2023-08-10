@@ -108,13 +108,13 @@ function stop(): void
  */
 function start(): void
 {
-    $serverCount = getFromEnv("SERVER_COUNT") ?? DEFAULT_NUM_SERVERS;
+    $numThreads = getFromEnv("NUM_THREADS") ?? DEFAULT_NUM_SERVERS;
 
     execute(["cat /etc/exports"]);
 
     execute(["/sbin/rpcbind -w"]);
     execute(["/sbin/rpcinfo"]);
-    execute(["/usr/sbin/rpc.nfsd --host 0.0.0.0 --debug --no-udp --no-nfs-version 3 $serverCount"]);
+    execute(["/usr/sbin/rpc.nfsd --host 0.0.0.0 --debug --no-udp --no-nfs-version 3 $numThreads"]);
     execute(["/usr/sbin/exportfs -rv"]);
     execute(["/usr/sbin/exportfs"]);
     execute(["/usr/sbin/rpc.mountd --debug all --no-udp --no-nfs-version 3"]);
