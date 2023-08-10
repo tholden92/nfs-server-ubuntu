@@ -92,9 +92,7 @@ function stop(): void
     list($code, $nfspid) = execute(["pidof rpc.nfsd"]);
     list($code, $mountdPid) = execute(["pidof rpc.mountd"]);
     list($code, $rpcBindPid) = execute(["pidof rpcbind"]);
-
-    echo $nfspid;
-
+    
     execute(["/usr/sbin/exportfs -uav"]);
     execute(["/usr/sbin/rpc.nfsd 0"]);
 
