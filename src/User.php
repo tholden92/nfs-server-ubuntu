@@ -50,6 +50,8 @@ class User
 
         list($groupName, $groupId) = $group;
 
-        $this->process->execute([sprintf("gpasswd -a %s %s", $name, $groupName)]);
+        $this->process->execute([
+            sprintf("gpasswd -a %s %s", $name, $groupName)
+        ]);
     }
 }
