@@ -36,6 +36,16 @@ class UserService
 
         echo "Creating user " . $name . PHP_EOL;
 
+        $user = $this->entry->getUser($name);
+
+        if ($user !== null) {
+            $this->process->execute([
+                "usermod -u $uid $name"
+            ]);
+
+            return;
+        }
+
         $this->process->execute([
             sprintf("useradd -u %s -g %s %s", $uid, $group->name, $name)
         ]);

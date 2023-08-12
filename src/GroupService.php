@@ -24,8 +24,16 @@ class GroupService
      */
     public function create(string $gid, string $name): void
     {
-        if ($this->entry->getGroup($name) === null) {
-            $this->process->execute(["groupadd -g $gid $name"]);
+        $group = $this->entry->getGroup($name);
+
+        if ($group !== null) {
+            $this->process->execute([
+                "groupmod -g $gid $group->name"
+            ]);
+
+            return;
         }
+
+        $this->process->execute(["groupadd -g $gid $name"]);
     }
 }
