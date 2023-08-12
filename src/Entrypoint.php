@@ -204,7 +204,7 @@ class Entrypoint
         if ($code !== 0) {
             throw new Exception("Failed to start nfsd");
         }
-        
+
         list ($code) = $this->process->execute(["/sbin/rpcbind -s -d"]);
 
         if ($code !== 0) {
