@@ -13,7 +13,7 @@ services:
     volumes:
       - "/exports"
     environment:
-      USER_0_NAME: nettbureaubot
+      USER_0_NAME: test
       USER_0_IDENTIFIER: 1006
       USER_0_PRIMARY_GROUP_IDENTIFIER: 1007
       USER_0_SECONDARY_GROUP_IDENTIFIERS: 33
