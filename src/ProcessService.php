@@ -2,7 +2,7 @@
 
 namespace Thomas\NfsServer;
 
-class Process
+class ProcessService
 {
     /**
      * @param array $cmd

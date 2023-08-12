@@ -13,11 +13,11 @@ const DEFAULT_NUM_SERVERS = 8;
 
 class Entrypoint
 {
-    private Process $process;
-    private Group $group;
-    private User $user;
+    private ProcessService $process;
+    private GroupService $group;
+    private UserService $user;
 
-    public function __construct(Process $process, Group $group, User $user)
+    public function __construct(ProcessService $process, GroupService $group, UserService $user)
     {
         $this->process = $process;
         $this->group = $group;
@@ -95,12 +95,12 @@ class Entrypoint
      */
     private function setupExports(): void
     {
-        $env = self::getFromEnv(null);
+        $env = $this->getFromEnv(null);
 
         $exports = "";
 
         foreach ($env as $key => $value) {
-            if (str_contains($key, "NFS_EXPORT")) {
+            if (str_contains($key, "EXPORT_")) {
                 $exports .= $value . PHP_EOL;
             }
         }
@@ -119,7 +119,7 @@ class Entrypoint
     {
         $index = 0;
 
-        while (self::getFromEnv("USER_{$index}_NAME") !== null) {
+        while ($this->getFromEnv("USER_{$index}_NAME") !== null) {
             $index++;
         }
 
@@ -128,12 +128,12 @@ class Entrypoint
         for ($i = 0; $i < $largestIndex; $i++) {
             $userKeyPrefix = "USER_{$i}_";
 
-            $name = self::getFromEnv($userKeyPrefix . "NAME");
-            $identifier = self::getFromEnv($userKeyPrefix . "IDENTIFIER");
-            $primary_group_identifier = self::getFromEnv($userKeyPrefix . "PRIMARY_GROUP_IDENTIFIER");
+            $name = $this->getFromEnv($userKeyPrefix . "NAME");
+            $identifier = $this->getFromEnv($userKeyPrefix . "IDENTIFIER");
+            $primary_group_identifier = $this->getFromEnv($userKeyPrefix . "PRIMARY_GROUP_IDENTIFIER");
 
-            $secondary_group_identifiers = self::getFromEnv($userKeyPrefix . "SECONDARY_GROUP_IDENTIFIERS");
-            $secondary_group_names = self::getFromEnv($userKeyPrefix . "SECONDARY_GROUP_NAMES");
+            $secondary_group_identifiers = $this->getFromEnv($userKeyPrefix . "SECONDARY_GROUP_IDENTIFIERS");
+            $secondary_group_names = $this->getFromEnv($userKeyPrefix . "SECONDARY_GROUP_NAMES");
 
             if ($name === null || $identifier === null || $primary_group_identifier === null) {
                 continue;
@@ -190,7 +190,7 @@ class Entrypoint
      */
     private function start(): void
     {
-        $numThreads = self::getFromEnv("NUM_THREADS") ?? DEFAULT_NUM_SERVERS;
+        $numThreads = $this->getFromEnv("THREADS") ?? DEFAULT_NUM_SERVERS;
 
         $this->process->execute(["mount rpc_pipefs"]);
         $this->process->execute(["mount nfsd"]);
