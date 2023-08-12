@@ -13,12 +13,13 @@ services:
     volumes:
       - "/exports"
     environment:
-      USER_0_NAME: test
-      USER_0_IDENTIFIER: 1006
-      USER_0_PRIMARY_GROUP_IDENTIFIER: 1007
-      USER_0_SECONDARY_GROUP_IDENTIFIERS: 33
-      USER_0_SECONDARY_GROUP_NAMES: www-data
+      # Creates a user named test and assign groups
+      USER_0_NAME: "test"
+      USER_0_IDENTIFIER: "1006"
+      USER_0_PRIMARY_GROUP_IDENTIFIER: "1007"
+      USER_0_SECONDARY_GROUP_IDENTIFIERS: "33"
+      USER_0_SECONDARY_GROUP_NAMES: "www-data"
       # Exports a filesystem
-      NFS_EXPORT_0: "/exports *(rw,insecure,sync,no_subtree_check,fsid=0,no_root_squash)"
+      EXPORT_0: "/exports *(rw,insecure,sync,no_subtree_check,fsid=0,no_root_squash)"
       # Spawn 16 worker threads
-      NFS_THREADS: 16
+      THREADS: 16
