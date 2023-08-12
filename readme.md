@@ -1,30 +1,15 @@
-# NFS Server
+# Description of the Docker Image for NFS Server
 
-NFS server running in docker/kubernetes with Ubuntu as the base image.
+The Docker image tholden92/nfs-server provides a ready-to-use NFS (Network File System) server, which is based on the Ubuntu OS. The image facilitates file sharing across a network in a seamless and efficient manner.
 
-## Example with docker-compose
+Customizing Users and Exports
 
-```
-version: "3.9"
+You can customize the users and exports by setting the environment variables:
 
-services:
-    nfs-server:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        restart: always
-        image: tholden92/nfs-server
-        privileged: true
-        ports:
-            - "2049:2049"
-            - "635:635"
-        volumes:
-            - "/exports"
-        environment:
-            NFS_EXPORT_0: "/exports *(rw,fsid=0,sync,no_subtree_check,no_auth_nlm,insecure,no_root_squash)"
-            NUM_THREADS: 16
-```
+    USER_X: Define users. For instance, to define test-user, set the USER_0 variable.
 
-## Kubernetes
+    USER_X: "username:uid:gid": To define a user with specific UID and GID. For instance, USER_1: "test:1005:1005" creates a user named test with UID and GID both set to 1005.
 
-Container image is tested on GKE. Probably works fine on other cloud providers.
+    NFS_EXPORT_X: To define custom export parameters. For instance, the default configuration exports the /exports directory.
+
+See docker-compose example for more details.

@@ -66,24 +66,6 @@ function setupExports(): void
 
 /**
  * @return void
- * @throws Exception
- */
-function setupConfiguration(): void
-{
-    setupExports();
-}
-
-/**
- * @throws Exception
- */
-function setup(): void
-{
-    setupSignals();
-    setupConfiguration();
-}
-
-/**
- * @return void
  */
 function stop(): void
 {
@@ -92,11 +74,78 @@ function stop(): void
     list($code, $nfspid) = execute(["pidof rpc.nfsd"]);
     list($code, $mountdPid) = execute(["pidof rpc.mountd"]);
     list($code, $rpcBindPid) = execute(["pidof rpcbind"]);
-    
+
     execute(["/usr/sbin/exportfs -uav"]);
     execute(["/usr/sbin/rpc.nfsd 0"]);
 
     execute(["kill -TERM $nfspid[0] $mountdPid[0] $rpcBindPid[0]"]);
+
+    exit(true);
+}
+
+function setupIdMapD()
+{
+    $domain = getFromEnv("IDMAP_DOMAIN");
+    $username = getFromEnv("IDMAP_USERNAME");
+    $group = getFromEnv("IDMAP_GROUP");
+
+    if ($domain === null) {
+        return null;
+    }
+
+    $config = file_get_contents("idmapd.conf");
+
+    $config = str_replace("{domain}", $domain, $config);
+    $config = str_replace("{user}", $username !== null ? $username : "nobody", $config);
+    $config = str_replace("{group}", $group !== null ? $group : "nogroup", $config);
+
+    file_put_contents("/etc/idmapd.conf", $config);
+
+    // Modern kernels disables idmap when using auth=sys, so enable it...
+    execute(["echo \"N\" > /sys/module/nfsd/parameters/nfs4_disable_idmapping"]);
+
+    // Start daemon and pipe to stdout
+    execute(["rpc.idmapd -f -vvvvvvv 1>&2 &"]);
+
+    // Wait for daemon to became active
+    while (!processExists("rpc.idmapd")) {
+        sleep(1);
+    }
+}
+
+function addUser(string $username): void
+{
+    execute(["useradd -s /bin/bash $username 2>/dev/null"]);
+}
+
+function addUserWithPredefinedIds(string $user): void
+{
+    list($username, $ids) = explode(":", $user);
+    list($uid, $guid) = explode("x", $ids);
+
+    execute(["groupadd -g $guid $username 2>/dev/null"]);
+
+    execute(["useradd -s /bin/bash $username -u $uid -g $guid 2>/dev/null"]);
+}
+
+function createUser(string $user): void
+{
+    if (str_contains($user, ":") && str_contains($user, "x")) {
+        addUserWithPredefinedIds($user);
+    } else {
+        addUser($user);
+    }
+}
+
+function setupUsers(): void
+{
+    $users = getFromEnv(null);
+
+    foreach ($users as $key => $user) {
+        if (str_contains($key, "USER")) {
+            createUser(trim($user));
+        }
+    }
 }
 
 /**
@@ -111,12 +160,17 @@ function start(): void
 
     execute(["cat /etc/exports"]);
 
-    execute(["/sbin/rpcbind -w"]);
+    execute(["/sbin/rpcbind -s -d"]);
     execute(["/sbin/rpcinfo"]);
-    execute(["/usr/sbin/rpc.nfsd --host 0.0.0.0 --debug --no-udp --no-nfs-version 3 $numThreads"]);
+
     execute(["/usr/sbin/exportfs -rv"]);
     execute(["/usr/sbin/exportfs"]);
+
     execute(["/usr/sbin/rpc.mountd --debug all --no-udp --no-nfs-version 3"]);
+
+    setupIdMapD();
+
+    execute(["/usr/sbin/rpc.nfsd --host 0.0.0.0 --debug --no-udp --no-nfs-version 3 $numThreads"]);
 }
 
 /**
@@ -153,7 +207,9 @@ function processExists($processName): bool
  */
 function init(): void
 {
-    setup();
+    setupSignals();
+    setupUsers();
+    setupExports();
 
     start();
 

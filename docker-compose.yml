@@ -6,13 +6,18 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    image: tholden92/nfs-server
-    privileged: true
     ports:
       - "2049:2049"
-      - "635:635"
+    image: tholden92/nfs-server
+    privileged: true
     volumes:
       - "/exports"
     environment:
-      NFS_EXPORT_0: "/exports *(rw,fsid=0,sync,no_subtree_check,no_auth_nlm,insecure,no_root_squash)"
-      NUM_THREADS: 16
+      # Create a user named test-user
+      USER_0: "test-user"
+      # Creates a user named test with uid 1005 and gid 1005
+      USER_1: "test:1005:1005"
+      # Exports a filesystem
+      NFS_EXPORT_0: "/exports *(rw,insecure,sync,no_subtree_check,fsid=0,no_root_squash)"
+      # Spawn 16 worker threads
+      NFS_THREADS: 16
