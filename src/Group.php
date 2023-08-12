@@ -6,30 +6,37 @@ use Exception;
 
 class Group
 {
-    public static function exists(string $identifier): bool
+    private Process $process;
+
+    public function __construct(Process $process)
     {
-        list($code, $output) = Process::execute(["getent group $identifier"]);
+        $this->process = $process;
+    }
+
+    public function exists(string $identifier): bool
+    {
+        list($code, $output) = $this->process->execute(["getent group $identifier"]);
         return count($output) > 0;
+    }
+
+    public function create(string $primary_group_identifier, string $name): void
+    {
+        if (!$this->exists($primary_group_identifier)) {
+            $this->process->execute(["groupadd -g $primary_group_identifier $name"]);
+        }
     }
 
     /**
      * @throws Exception
      */
-    public static function getNameById(string $identifier): ?string
+    public function getNameById(string $identifier): ?string
     {
-        list($code, $output) = Process::execute(["getent group $identifier 2>/dev/null"], false);
+        list($code, $output) = $this->process->execute(["getent group $identifier 2>/dev/null"], false);
 
         if (count($output) !== 1) {
             throw new Exception("Could not find group with gid $identifier");
         }
 
         return explode(":", $output[0])[0];
-    }
-
-    public static function create(string $primary_group_identifier, string $name): void
-    {
-        if (!self::exists($primary_group_identifier)) {
-            Process::execute(["groupadd -g $primary_group_identifier $name"]);
-        }
     }
 }

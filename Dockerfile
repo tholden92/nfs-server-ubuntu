@@ -16,4 +16,4 @@ WORKDIR /app
 
 USER root
 
-ENTRYPOINT ["php", "src/entrypoint.php"]
+ENTRYPOINT ["php", "src/Entrypoint.php"]

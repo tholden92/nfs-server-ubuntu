@@ -6,27 +6,36 @@ use Exception;
 
 class User
 {
-    public static function exists(string $identifier): bool
+    private Process $process;
+    private Group $group;
+
+    function __construct(Process $process, Group $group)
     {
-        list($code, $output) = Process::execute(["getent passwd $identifier"]);
+        $this->process = $process;
+        $this->group = $group;
+    }
+
+    public function exists(string $identifier): bool
+    {
+        list($code, $output) = $this->process->execute(["getent passwd $identifier"]);
         return count($output) > 0;
     }
 
     /**
      * @throws Exception
      */
-    public static function create($name, $uid, $guid): void
+    public function create($name, $uid, $guid): void
     {
         if (!self::exists($uid)) {
-            Process::execute([sprintf("useradd -u %s -g %s %s", $uid, Group::getNameById($guid), $name)]);
+            $this->process->execute([sprintf("useradd -u %s -g %s %s", $uid, $this->group->getNameById($guid), $name)]);
         }
     }
 
     /**
      * @throws Exception
      */
-    public static function addToGroup($name, $gid): void
+    public function addToGroup($name, $gid): void
     {
-        Process::execute([sprintf("gpasswd -a %s %s", $name, Group::getNameById($gid))]);
+        $this->process->execute([sprintf("gpasswd -a %s %s", $name, $this->group->getNameById($gid))]);
     }
 }

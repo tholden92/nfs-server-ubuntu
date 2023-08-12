@@ -10,5 +10,8 @@
       "name": "Thomas Holden",
       "email": "thomas@tholden.no"
     }
-  ]
+  ],
+  "require": {
+    "php-di/php-di": "^7.0"
+  }
 }
