@@ -13,10 +13,11 @@ services:
     volumes:
       - "/exports"
     environment:
-      # Create a user named test-user
-      USER_0: "test-user"
-      # Creates a user named test with uid 1005 and gid 1005
-      USER_1: "test:1005x1005"
+      USER_0_NAME: nettbureaubot
+      USER_0_IDENTIFIER: 1006
+      USER_0_PRIMARY_GROUP_IDENTIFIER: 1007
+      USER_0_SECONDARY_GROUP_IDENTIFIERS: 33
+      USER_0_SECONDARY_GROUP_NAMES: www-data
       # Exports a filesystem
       NFS_EXPORT_0: "/exports *(rw,insecure,sync,no_subtree_check,fsid=0,no_root_squash)"
       # Spawn 16 worker threads
