@@ -10,7 +10,6 @@ declare(ticks=1);
 
 const DEFAULT_NUM_SERVERS = 8;
 
-
 function getFromEnv(?string $param)
 {
     $env = getenv();
