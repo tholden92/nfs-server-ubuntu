@@ -12,7 +12,7 @@ class ProcessService
     public function execute(array $cmd, bool $debug = true): array
     {
         if ($debug) {
-            echo "Running: " . implode(PHP_EOL, $cmd) . PHP_EOL;
+            echo "Executing command: " . implode(PHP_EOL, $cmd) . PHP_EOL;
         }
 
         exec(implode(" ", $cmd), $outputs, $code);
