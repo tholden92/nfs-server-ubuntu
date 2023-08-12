@@ -7,18 +7,16 @@ use Exception;
 class User
 {
     private Process $process;
-    private Group $group;
+    private Entity $entity;
 
-    function __construct(Process $process, Group $group)
+    /**
+     * @param Process $process
+     * @param Entity $entity
+     */
+    function __construct(Process $process, Entity $entity)
     {
         $this->process = $process;
-        $this->group = $group;
-    }
-
-    public function exists(string $identifier): bool
-    {
-        list($code, $output) = $this->process->execute(["getent passwd $identifier"]);
-        return count($output) > 0;
+        $this->entity = $entity;
     }
 
     /**
@@ -26,9 +24,17 @@ class User
      */
     public function create($name, $uid, $guid): void
     {
-        if (!self::exists($uid)) {
-            $this->process->execute([sprintf("useradd -u %s -g %s %s", $uid, $this->group->getNameById($guid), $name)]);
+        $group = $this->entity->getGroup($guid);
+
+        if ($group === null) {
+            throw new Exception("Group does not exist");
         }
+
+        list($groupName, $groupId) = $group;
+
+        $this->process->execute([
+            sprintf("useradd -u %s -g %s %s", $uid, $groupName, $name)
+        ]);
     }
 
     /**
@@ -36,6 +42,14 @@ class User
      */
     public function addToGroup($name, $gid): void
     {
-        $this->process->execute([sprintf("gpasswd -a %s %s", $name, $this->group->getNameById($gid))]);
+        $group = $this->entity->getGroup($gid);
+
+        if ($group === null) {
+            throw new Exception("Group does not exist");
+        }
+
+        list($groupName, $groupId) = $group;
+
+        $this->process->execute([sprintf("gpasswd -a %s %s", $name, $groupName)]);
     }
 }
