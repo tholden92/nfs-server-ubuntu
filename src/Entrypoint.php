@@ -187,27 +187,57 @@ class Entrypoint
 
     /**
      * @return void
+     * @throws Exception
      */
     private function start(): void
     {
         $numThreads = $this->getFromEnv("THREADS") ?? DEFAULT_NUM_SERVERS;
 
-        $this->process->execute(["mount rpc_pipefs"]);
-        $this->process->execute(["mount nfsd"]);
+        list ($code) = $this->process->execute(["mount rpc_pipefs"]);
+
+        if ($code !== 0) {
+            throw new Exception("Failed to mount rpc_pipefs");
+        }
+
+        list ($code) = $this->process->execute(["mount nfsd"]);
+
+        if ($code !== 0) {
+            throw new Exception("Failed to start nfsd");
+        }
 
         $this->process->execute(["cat /etc/exports"]);
 
-        $this->process->execute(["/sbin/rpcbind -s -d"]);
+        list ($code) = $this->process->execute(["/sbin/rpcbind -s -d"]);
+
+        if ($code !== 0) {
+            throw new Exception("Failed to start rpcbind");
+        }
+
         $this->process->execute(["/sbin/rpcinfo"]);
 
-        $this->process->execute(["/usr/sbin/exportfs -rv"]);
+        list ($code) = $this->process->execute(["/usr/sbin/exportfs -rv"]);
+
+        if ($code !== 0) {
+            throw new Exception("Failed to export shares");
+        }
+
         $this->process->execute(["/usr/sbin/exportfs"]);
 
-        $this->process->execute(["/usr/sbin/rpc.mountd --debug all --no-udp --no-nfs-version 3"]);
+        list ($code) = $this->process->execute(["/usr/sbin/rpc.mountd --debug all --no-udp --no-nfs-version 3"]);
+
+        if ($code !== 0) {
+            throw new Exception("Failed to start mountd");
+        }
 
         $this->setupIdMapD();
 
-        $this->process->execute(["/usr/sbin/rpc.nfsd --host 0.0.0.0 --debug --no-udp --no-nfs-version 3 $numThreads"]);
+        list ($code) = $this->process->execute(
+            ["/usr/sbin/rpc.nfsd --host 0.0.0.0 --debug --no-udp --no-nfs-version 3 $numThreads"]
+        );
+
+        if ($code !== 0) {
+            throw new Exception("Failed to start nfsd");
+        }
     }
 
     /**
