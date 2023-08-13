@@ -34,8 +34,6 @@ class UserService
             throw new Exception("Group does not exist");
         }
 
-        echo "Creating user " . $name . PHP_EOL;
-
         $user = $this->entry->getUser($name);
 
         if ($user !== null) {
@@ -47,7 +45,7 @@ class UserService
         }
 
         $this->process->execute([
-            sprintf("useradd -o -u %s -g %s %s", $uid, $group->name, $name)
+            sprintf("useradd -o -u %s -g %s %s", $uid, $group->groupname, $name)
         ]);
     }
 
@@ -66,7 +64,7 @@ class UserService
         }
 
         $this->process->execute([
-            sprintf("gpasswd -a %s %s", $name, $group->name)
-        ]);
+            sprintf("gpasswd -a %s %s", $name, $group->groupname)
+        ], false);
     }
 }

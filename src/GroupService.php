@@ -28,7 +28,7 @@ class GroupService
 
         if ($group !== null) {
             $this->process->execute([
-                "groupmod -o -g $gid $group->name"
+                "groupmod -o -g $gid $group->groupname"
             ]);
 
             return;

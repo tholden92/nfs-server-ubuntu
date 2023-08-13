@@ -16,12 +16,14 @@ class Entrypoint
     private ProcessService $process;
     private GroupService $group;
     private UserService $user;
+    private EntryService $entry;
 
-    public function __construct(ProcessService $process, GroupService $group, UserService $user)
+    public function __construct(ProcessService $process, GroupService $group, UserService $user, EntryService $entry)
     {
         $this->process = $process;
         $this->group = $group;
         $this->user = $user;
+        $this->entry = $entry;
     }
 
     private function getFromEnv(?string $param)
@@ -125,6 +127,8 @@ class Entrypoint
 
         $largestIndex = $index;
 
+        $users = [];
+
         for ($i = 0; $i < $largestIndex; $i++) {
             $userKeyPrefix = "USER_{$i}_";
 
@@ -141,6 +145,8 @@ class Entrypoint
 
             $this->group->create($primary_group_identifier, $name);
             $this->user->create($name, $identifier, $primary_group_identifier);
+
+            $users[] = $name;
 
             if ($secondary_group_identifiers === null || $secondary_group_names === null) {
                 continue;
@@ -160,6 +166,20 @@ class Entrypoint
                 $this->group->create($groupId, $groupName);
                 $this->user->addToGroup($name, $groupId);
             }
+        }
+
+        echo "Creating users" . PHP_EOL;
+
+        foreach ($users as $user) {
+            $entry = $this->entry->getUser($user);
+            echo sprintf(
+                "%s:x:%s:%s:%s:%s \n",
+                $entry->username,
+                $entry->uid,
+                $entry->gid,
+                $entry->home,
+                $entry->shell
+            );
         }
     }
 

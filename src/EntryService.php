@@ -2,7 +2,8 @@
 
 namespace Thomas\NfsServer;
 
-use Thomas\NfsServer\model\Entry;
+use Thomas\NfsServer\model\Group;
+use Thomas\NfsServer\model\User;
 
 class EntryService
 {
@@ -16,28 +17,50 @@ class EntryService
 
     /**
      * @param string $identifier
-     * @return Entry|null
+     * @return Group|null
      */
-    public function getUser(string $identifier): ?Entry
+    public function getUser(string $identifier): ?User
     {
-        return $this->getEntry($identifier, "passwd");
+        $entry = $this->getEntry($identifier, "passwd");
+
+        if ($entry === null) {
+            return null;
+        }
+
+        return new User([
+            "username" => $entry[0],
+            "uid" => $entry[2],
+            "gid" => $entry[3],
+            "home" => $entry[5],
+            "shell" => $entry[6]
+        ]);
     }
 
     /**
      * @param string $identifier
-     * @return Entry|null
+     * @return Group|null
      */
-    public function getGroup(string $identifier): ?Entry
+    public function getGroup(string $identifier): ?Group
     {
-        return $this->getEntry($identifier, "group");
+        $entry = $this->getEntry($identifier, "group");
+
+        if ($entry === null) {
+            return null;
+        }
+
+        return new Group([
+            "groupname" => $entry[0],
+            "gid" => $entry[2],
+            "userList" => $entry[3]
+        ]);
     }
 
     /**
      * @param string $identifier
      * @param string $database
-     * @return Entry|null
+     * @return string[]|null
      */
-    private function getEntry(string $identifier, string $database): ?Entry
+    private function getEntry(string $identifier, string $database): ?array
     {
         $output = $this->lookup($identifier, $database);
 
@@ -51,7 +74,7 @@ class EntryService
             return null;
         }
 
-        return new Entry($entity[2], $entity[0]);
+        return $entity;
     }
 
     /**
