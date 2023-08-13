@@ -40,14 +40,14 @@ class UserService
 
         if ($user !== null) {
             $this->process->execute([
-                "usermod -u $uid $name"
+                "usermod -o -u $uid $name"
             ]);
 
             return;
         }
 
         $this->process->execute([
-            sprintf("useradd -u %s -g %s %s", $uid, $group->name, $name)
+            sprintf("useradd -o -u %s -g %s %s", $uid, $group->name, $name)
         ]);
     }
 

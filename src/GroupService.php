@@ -28,12 +28,12 @@ class GroupService
 
         if ($group !== null) {
             $this->process->execute([
-                "groupmod -g $gid $group->name"
+                "groupmod -o -g $gid $group->name"
             ]);
 
             return;
         }
 
-        $this->process->execute(["groupadd -g $gid $name"]);
+        $this->process->execute(["groupadd -o -g $gid $name"]);
     }
 }

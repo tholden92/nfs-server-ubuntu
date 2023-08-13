@@ -11,10 +11,6 @@ class ProcessService
      */
     public function execute(array $cmd, bool $debug = true): array
     {
-        if ($debug) {
-            echo "Executing command: " . implode(PHP_EOL, $cmd) . PHP_EOL;
-        }
-
         exec(implode(" ", $cmd), $outputs, $code);
 
         if ($debug) {
