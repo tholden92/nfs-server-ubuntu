@@ -127,8 +127,6 @@ class Entrypoint
 
         $largestIndex = $index;
 
-        $users = [];
-
         for ($i = 0; $i < $largestIndex; $i++) {
             $userKeyPrefix = "USER_{$i}_";
 
@@ -146,8 +144,6 @@ class Entrypoint
             $this->group->create($primary_group_identifier, $name);
             $this->user->create($name, $identifier, $primary_group_identifier);
 
-            $users[] = $name;
-
             if ($secondary_group_identifiers === null || $secondary_group_names === null) {
                 continue;
             }
@@ -164,22 +160,8 @@ class Entrypoint
                 $groupName = $secondary_groups_names[$j];
 
                 $this->group->create($groupId, $groupName);
-                $this->user->addToGroup($name, $groupId);
+                $this->user->addToGroup($name, $groupName);
             }
-        }
-
-        echo "Creating users" . PHP_EOL;
-
-        foreach ($users as $user) {
-            $entry = $this->entry->getUser($user);
-            echo sprintf(
-                "%s:x:%s:%s:%s:%s \n",
-                $entry->username,
-                $entry->uid,
-                $entry->gid,
-                $entry->home,
-                $entry->shell
-            );
         }
     }
 

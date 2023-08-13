@@ -51,20 +51,13 @@ class UserService
 
     /**
      * @param string $name
-     * @param string $gid
+     * @param string $groupName
      * @return void
-     * @throws Exception
      */
-    public function addToGroup(string $name, string $gid): void
+    public function addToGroup(string $name, string $groupName): void
     {
-        $group = $this->entry->getGroup($gid);
-
-        if ($group === null) {
-            throw new Exception("Group does not exist");
-        }
-
         $this->process->execute([
-            sprintf("gpasswd -a %s %s", $name, $group->groupname)
+            sprintf("gpasswd -a %s %s", $name, $groupName)
         ], false);
     }
 }
