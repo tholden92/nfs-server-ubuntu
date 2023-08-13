@@ -16,14 +16,12 @@ class Entrypoint
     private ProcessService $process;
     private GroupService $group;
     private UserService $user;
-    private EntryService $entry;
 
-    public function __construct(ProcessService $process, GroupService $group, UserService $user, EntryService $entry)
+    public function __construct(ProcessService $process, GroupService $group, UserService $user)
     {
         $this->process = $process;
         $this->group = $group;
         $this->user = $user;
-        $this->entry = $entry;
     }
 
     private function getFromEnv(?string $param)
