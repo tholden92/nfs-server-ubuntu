@@ -211,8 +211,6 @@ class Entrypoint
             throw new Exception("Failed to start rpcbind");
         }
 
-        $this->process->execute(["/sbin/rpcinfo"]);
-
         list ($code) = $this->process->execute(["/usr/sbin/exportfs -rv"]);
 
         if ($code !== 0) {
@@ -236,6 +234,8 @@ class Entrypoint
         if ($code !== 0) {
             throw new Exception("Failed to start nfsd");
         }
+
+        $this->process->execute(["/sbin/rpcinfo"]);
     }
 
     /**
