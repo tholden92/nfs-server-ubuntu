@@ -58,6 +58,6 @@ class UserService
     {
         $this->process->execute([
             sprintf("gpasswd -a %s %s", $name, $groupName)
-        ], false);
+        ]);
     }
 }
